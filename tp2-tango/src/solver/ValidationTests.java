@@ -69,7 +69,86 @@ public class ValidationTests {
         b5.setCell(0, 2, CellValue.SUN);
         check("3 SUNs seguidos → isFullyValid false", !rule.isFullyValid(b5));
     }
-    private static void testBalanceRule()     { System.out.println("\n--- BalanceRule ---");     }
+    private static void testBalanceRule() {
+        System.out.println("\n--- BalanceRule ---");
+        BalanceRule rule = new BalanceRule();
+        int N = 6;
+
+        // 4 SUNs na linha → inválido durante colocação
+        Board b1 = new Board(N);
+        b1.setCell(0, 0, CellValue.SUN);
+        b1.setCell(0, 1, CellValue.SUN);
+        b1.setCell(0, 2, CellValue.SUN);
+        b1.setCell(0, 3, CellValue.SUN);
+        check("4 SUNs na linha → isValidPlacement false", !rule.isValidPlacement(b1, 0, 3));
+
+        // Exatamente 3 SUNs (limite) → ainda válido durante colocação
+        Board b2 = new Board(N);
+        b2.setCell(0, 0, CellValue.SUN);
+        b2.setCell(0, 1, CellValue.SUN);
+        b2.setCell(0, 2, CellValue.SUN);
+        check("3 SUNs na linha (limite N/2) → isValidPlacement true", rule.isValidPlacement(b2, 0, 2));
+
+        // Linha completa: 3 SUNs + 3 MOONs → isFullyValid true
+        Board b3 = new Board(N);
+        // Row 0: S-M-S-M-S-M
+        b3.setCell(0, 0, CellValue.SUN);
+        b3.setCell(0, 1, CellValue.MOON);
+        b3.setCell(0, 2, CellValue.SUN);
+        b3.setCell(0, 3, CellValue.MOON);
+        b3.setCell(0, 4, CellValue.SUN);
+        b3.setCell(0, 5, CellValue.MOON);
+        // Row 1: M-S-M-S-M-S
+        b3.setCell(1, 0, CellValue.MOON);
+        b3.setCell(1, 1, CellValue.SUN);
+        b3.setCell(1, 2, CellValue.MOON);
+        b3.setCell(1, 3, CellValue.SUN);
+        b3.setCell(1, 4, CellValue.MOON);
+        b3.setCell(1, 5, CellValue.SUN);
+        // Row 2: S-M-S-M-S-M
+        b3.setCell(2, 0, CellValue.SUN);
+        b3.setCell(2, 1, CellValue.MOON);
+        b3.setCell(2, 2, CellValue.SUN);
+        b3.setCell(2, 3, CellValue.MOON);
+        b3.setCell(2, 4, CellValue.SUN);
+        b3.setCell(2, 5, CellValue.MOON);
+        // Row 3: M-S-M-S-M-S
+        b3.setCell(3, 0, CellValue.MOON);
+        b3.setCell(3, 1, CellValue.SUN);
+        b3.setCell(3, 2, CellValue.MOON);
+        b3.setCell(3, 3, CellValue.SUN);
+        b3.setCell(3, 4, CellValue.MOON);
+        b3.setCell(3, 5, CellValue.SUN);
+        // Row 4: S-M-S-M-S-M
+        b3.setCell(4, 0, CellValue.SUN);
+        b3.setCell(4, 1, CellValue.MOON);
+        b3.setCell(4, 2, CellValue.SUN);
+        b3.setCell(4, 3, CellValue.MOON);
+        b3.setCell(4, 4, CellValue.SUN);
+        b3.setCell(4, 5, CellValue.MOON);
+        // Row 5: M-S-M-S-M-S
+        b3.setCell(5, 0, CellValue.MOON);
+        b3.setCell(5, 1, CellValue.SUN);
+        b3.setCell(5, 2, CellValue.MOON);
+        b3.setCell(5, 3, CellValue.SUN);
+        b3.setCell(5, 4, CellValue.MOON);
+        b3.setCell(5, 5, CellValue.SUN);
+        check("3 SUNs + 3 MOONs → isFullyValid true", rule.isFullyValid(b3));
+
+        // Linha incompleta (células EMPTY) → isFullyValid false
+        Board b4 = new Board(N);
+        b4.setCell(0, 0, CellValue.SUN);
+        b4.setCell(0, 1, CellValue.SUN);
+        check("2 SUNs + EMPTYs → isFullyValid false", !rule.isFullyValid(b4));
+
+        // 4 MOONs na coluna → inválido durante colocação
+        Board b5 = new Board(N);
+        b5.setCell(0, 2, CellValue.MOON);
+        b5.setCell(1, 2, CellValue.MOON);
+        b5.setCell(2, 2, CellValue.MOON);
+        b5.setCell(3, 2, CellValue.MOON);
+        check("4 MOONs na coluna → isValidPlacement false", !rule.isValidPlacement(b5, 3, 2));
+    }
     private static void testConstraintRule()  { System.out.println("\n--- ConstraintRule ---");  }
     private static void testRuleValidator()   { System.out.println("\n--- RuleValidator ---");   }
 }
