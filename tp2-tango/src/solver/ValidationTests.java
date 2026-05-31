@@ -213,5 +213,48 @@ public class ValidationTests {
         b8.setCell(0, 1, CellValue.MOON);
         check("isFullyValid: constraint EQUAL violada → false", !rule.isFullyValid(b8));
     }
-    private static void testRuleValidator()   { System.out.println("\n--- RuleValidator ---");   }
+    private static void testRuleValidator() {
+        System.out.println("\n--- RuleValidator ---");
+        RuleValidator validator = new RuleValidator();
+        int N = 6;
+
+        // Tabuleiro vazio → isBoardValid false (células EMPTY)
+        Board b1 = new Board(N);
+        check("Tabuleiro vazio → isBoardValid false", !validator.isBoardValid(b1));
+
+        // Primeira célula SUN → isValidPlacement true
+        Board b2 = new Board(N);
+        b2.setCell(0, 0, CellValue.SUN);
+        check("Primeira célula SUN → isValidPlacement true", validator.isValidPlacement(b2, 0, 0));
+
+        // 3 SUNs seguidos → isValidPlacement false (viola adjacência)
+        Board b3 = new Board(N);
+        b3.setCell(0, 0, CellValue.SUN);
+        b3.setCell(0, 1, CellValue.SUN);
+        b3.setCell(0, 2, CellValue.SUN);
+        check("3 SUNs seguidos → isValidPlacement false", !validator.isValidPlacement(b3, 0, 2));
+
+        // Constraint violada → isValidPlacement false
+        Board b4 = new Board(N);
+        b4.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.OPPOSITE));
+        b4.setCell(0, 0, CellValue.SUN);
+        b4.setCell(0, 1, CellValue.SUN);
+        check("Constraint OPPOSITE violada → isValidPlacement false", !validator.isValidPlacement(b4, 0, 1));
+
+        // Tabuleiro 2x2 completamente válido
+        Board b5 = new Board(2);
+        b5.setCell(0, 0, CellValue.SUN);
+        b5.setCell(0, 1, CellValue.MOON);
+        b5.setCell(1, 0, CellValue.MOON);
+        b5.setCell(1, 1, CellValue.SUN);
+        check("Tabuleiro 2x2 válido → isBoardValid true", validator.isBoardValid(b5));
+
+        // Tabuleiro 2x2 com coluna desequilibrada
+        Board b6 = new Board(2);
+        b6.setCell(0, 0, CellValue.SUN);
+        b6.setCell(0, 1, CellValue.SUN);
+        b6.setCell(1, 0, CellValue.MOON);
+        b6.setCell(1, 1, CellValue.MOON);
+        check("Tabuleiro 2x2 coluna desequilibrada → isBoardValid false", !validator.isBoardValid(b6));
+    }
 }
