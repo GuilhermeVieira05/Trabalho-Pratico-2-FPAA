@@ -149,6 +149,69 @@ public class ValidationTests {
         b5.setCell(3, 2, CellValue.MOON);
         check("4 MOONs na coluna → isValidPlacement false", !rule.isValidPlacement(b5, 3, 2));
     }
-    private static void testConstraintRule()  { System.out.println("\n--- ConstraintRule ---");  }
+    private static void testConstraintRule() {
+        System.out.println("\n--- ConstraintRule ---");
+        ConstraintRule rule = new ConstraintRule();
+        int N = 6;
+
+        // EQUAL: SUN == SUN → válido
+        Board b1 = new Board(N);
+        b1.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.EQUAL));
+        b1.setCell(0, 0, CellValue.SUN);
+        b1.setCell(0, 1, CellValue.SUN);
+        check("EQUAL: SUN = SUN → válido", rule.isValidPlacement(b1, 0, 1));
+
+        // EQUAL: SUN vs MOON → inválido
+        Board b2 = new Board(N);
+        b2.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.EQUAL));
+        b2.setCell(0, 0, CellValue.SUN);
+        b2.setCell(0, 1, CellValue.MOON);
+        check("EQUAL: SUN = MOON → inválido", !rule.isValidPlacement(b2, 0, 1));
+
+        // OPPOSITE: SUN × MOON → válido
+        Board b3 = new Board(N);
+        b3.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.OPPOSITE));
+        b3.setCell(0, 0, CellValue.SUN);
+        b3.setCell(0, 1, CellValue.MOON);
+        check("OPPOSITE: SUN × MOON → válido", rule.isValidPlacement(b3, 0, 1));
+
+        // OPPOSITE: SUN × SUN → inválido
+        Board b4 = new Board(N);
+        b4.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.OPPOSITE));
+        b4.setCell(0, 0, CellValue.SUN);
+        b4.setCell(0, 1, CellValue.SUN);
+        check("OPPOSITE: SUN × SUN → inválido", !rule.isValidPlacement(b4, 0, 1));
+
+        // EQUAL com parceiro EMPTY → válido (estado parcial)
+        Board b5 = new Board(N);
+        b5.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.EQUAL));
+        b5.setCell(0, 0, CellValue.SUN);
+        // (0,1) permanece EMPTY
+        check("EQUAL com parceiro EMPTY → válido (parcial)", rule.isValidPlacement(b5, 0, 0));
+
+        // Constraint vertical OPPOSITE: MOON × MOON → inválido
+        Board b6 = new Board(N);
+        b6.addConstraint(new Constraint(0, 0, 1, 0, ConstraintType.OPPOSITE));
+        b6.setCell(0, 0, CellValue.MOON);
+        b6.setCell(1, 0, CellValue.MOON);
+        check("OPPOSITE vertical: MOON × MOON → inválido", !rule.isValidPlacement(b6, 1, 0));
+
+        // isFullyValid: todas as constraints satisfeitas
+        Board b7 = new Board(N);
+        b7.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.EQUAL));
+        b7.addConstraint(new Constraint(0, 2, 0, 3, ConstraintType.OPPOSITE));
+        b7.setCell(0, 0, CellValue.SUN);
+        b7.setCell(0, 1, CellValue.SUN);
+        b7.setCell(0, 2, CellValue.MOON);
+        b7.setCell(0, 3, CellValue.SUN);
+        check("isFullyValid: todas constraints satisfeitas → true", rule.isFullyValid(b7));
+
+        // isFullyValid: uma constraint violada
+        Board b8 = new Board(N);
+        b8.addConstraint(new Constraint(0, 0, 0, 1, ConstraintType.EQUAL));
+        b8.setCell(0, 0, CellValue.SUN);
+        b8.setCell(0, 1, CellValue.MOON);
+        check("isFullyValid: constraint EQUAL violada → false", !rule.isFullyValid(b8));
+    }
     private static void testRuleValidator()   { System.out.println("\n--- RuleValidator ---");   }
 }
