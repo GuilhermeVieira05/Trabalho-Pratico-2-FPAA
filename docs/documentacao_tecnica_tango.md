@@ -6,21 +6,21 @@ O problema foi implementado em Java. A ideia principal foi representar o tabulei
 
 No código, o tabuleiro fica na classe `Board`. Ela guarda:
 
-- o tamanho do tabuleiro;
-- uma matriz de objetos `Cell`;
+- o tamanho do tabuleiro
+- uma matriz de objetos `Cell`
 - uma lista de restrições entre células vizinhas.
 
 Cada célula fica na classe `Cell`, que possui linha, coluna, valor e uma informação dizendo se ela era fixa desde o início do jogo. Isso é importante porque as células que já vêm preenchidas no arquivo de entrada não podem ser modificadas pelos algoritmos. Na prática, o método que altera uma célula bloqueia essa modificação quando a célula é fixa, então os algoritmos só conseguem trabalhar sobre as posições que estavam vazias no arquivo.
 
 Os valores das células foram representados pelo enum `CellValue`, com as opções:
 
-- `SUN`, para Sol;
-- `MOON`, para Lua;
+- `SUN`, para Sol
+- `MOON`, para Lua
 - `EMPTY`, para célula vazia.
 
 As restrições de igualdade e oposição foram representadas pela classe `Constraint`. Cada restrição guarda as coordenadas de duas células e o tipo da restrição. O tipo fica no enum `ConstraintType`, com os valores:
 
-- `EQUAL`, quando as duas células devem ter o mesmo símbolo;
+- `EQUAL`, quando as duas células devem ter o mesmo símbolo
 - `OPPOSITE`, quando as duas células devem ter símbolos diferentes.
 
 A leitura do tabuleiro é feita pela classe `BoardReader`. O arquivo de entrada começa com o tamanho do tabuleiro, depois vem a grade inicial e depois as restrições. Na grade, usamos `S` para Sol, `L` para Lua e `.` para vazio. Nas restrições, usamos `H` para restrição horizontal e `V` para restrição vertical. O símbolo `=` indica igualdade e `X` indica oposição.
@@ -29,11 +29,13 @@ A impressão do tabuleiro é feita pela classe `BoardPrinter`, que mostra tanto 
 
 As regras do jogo foram separadas em classes próprias, usando a interface `Rule`. Essa separação ajuda porque as mesmas validações são usadas tanto na força bruta quanto no backtracking. As classes principais de validação são:
 
-- `AdjacencyRule`, que impede três símbolos iguais seguidos na horizontal ou vertical;
-- `BalanceRule`, que verifica se cada linha e coluna possui a mesma quantidade de sóis e luas;
+- `AdjacencyRule`, que impede três símbolos iguais seguidos na horizontal ou vertical
+- `BalanceRule`, que verifica se cada linha e coluna possui a mesma quantidade de sóis e luas
 - `ConstraintRule`, que verifica as restrições de igualdade e oposição.
 
 A classe `RuleValidator` junta essas regras e oferece dois tipos de validação: uma validação parcial, usada durante o backtracking, e uma validação completa, usada quando o tabuleiro já está preenchido. Na validação parcial, o código não precisa reavaliar tudo sempre: para adjacência e balanceamento ele olha a linha e a coluna da célula recém-preenchida, e para as restrições ele confere apenas aquelas ligadas a essa célula. A validação completa, por outro lado, percorre todas as linhas, colunas e restrições.
+
+No programa principal, o arquivo do puzzle é lido novamente antes de executar cada algoritmo. Fizemos isso porque tanto a força bruta quanto o backtracking alteram o tabuleiro em memória enquanto procuram a solução. Assim, os dois métodos começam sempre do mesmo estado inicial, o que deixa a comparação mais justa.
 
 ## 2. Estratégia de Resolução por Força Bruta
 
@@ -49,13 +51,13 @@ Por exemplo, se existirem 4 células vazias, o algoritmo testa todas as combina�
 
 Depois que uma combinação completa é colocada no tabuleiro, o algoritmo chama o validador para verificar se o tabuleiro inteiro respeita todas as regras:
 
-- todas as células precisam estar preenchidas;
-- não pode haver três símbolos iguais seguidos;
-- cada linha deve ter a mesma quantidade de sóis e luas;
-- cada coluna deve ter a mesma quantidade de sóis e luas;
+- todas as células precisam estar preenchidas
+- não pode haver três símbolos iguais seguidos
+- cada linha deve ter a mesma quantidade de sóis e luas
+- cada coluna deve ter a mesma quantidade de sóis e luas
 - as restrições `=` e `X` precisam estar corretas.
 
-Se a combinação for válida, o algoritmo termina ali e o tabuleiro fica resolvido. Por isso, em um caso com solução, ele não necessariamente testa todas as combinações possíveis; ele só testaria todas se a solução estivesse na última combinação ou se nenhuma solução fosse encontrada. Se a combinação atual não for válida, ele passa para a próxima máscara.
+Se a combinação for válida, o algoritmo termina ali e o tabuleiro fica resolvido. Por isso, em um caso com solução, ele não necessariamente testa todas as combinações possíveis. Ele só testaria todas se a solução estivesse na última combinação ou se nenhuma solução fosse encontrada. Se a combinação atual não for válida, ele passa para a próxima máscara.
 
 Essa estratégia funciona bem em tabuleiros pequenos, como o 4x4 usado nos testes. Porém, em tabuleiros maiores, o número de combinações cresce muito rápido. Por isso a força bruta foi usada principalmente para demonstrar o espaço total de busca e comparar com o backtracking.
 
@@ -63,14 +65,16 @@ Essa estratégia funciona bem em tabuleiros pequenos, como o 4x4 usado nos teste
 
 O backtracking também preenche o tabuleiro por tentativa, mas ele não espera o tabuleiro inteiro ficar pronto para validar. A cada valor colocado, ele verifica se aquela escolha ainda pode levar a uma solução válida.
 
-No código, o backtracking fica na classe `BacktrackingSolver`. A função principal procura a próxima célula vazia do tabuleiro. Depois tenta preencher essa célula primeiro com Sol e depois com Lua.
+No código, o backtracking fica na classe `BacktrackingSolver`. A função principal procura a próxima célula vazia do tabuleiro, percorrendo a matriz de cima para baixo e da esquerda para a direita. Mantivemos essa escolha simples porque ela já era suficiente para os tabuleiros usados no trabalho. Uma heurística mais elaborada, como procurar primeiro a célula com mais restrições, poderia reduzir algumas tentativas, mas também deixaria o código mais difícil de acompanhar. Como o objetivo era comparar força bruta e backtracking, preferimos deixar a poda das regras como o ponto principal da implementação.
+
+Depois de escolher uma célula vazia, o algoritmo tenta preencher primeiro com Sol e depois com Lua. Essa ordem não muda as regras do problema, mas pode mudar a quantidade de nós explorados. Se a solução estiver mais próxima das escolhas que começam com Sol, o algoritmo chega nela mais rápido. Se várias escolhas iniciais com Sol levarem a caminhos errados, ele precisa voltar mais vezes antes de tentar Lua.
 
 A condição de parada acontece quando não existe mais nenhuma célula vazia. Nesse caso, o tabuleiro está completo e o algoritmo faz uma validação final usando todas as regras. Se o tabuleiro completo for válido, a solução foi encontrada.
 
 Durante a recursão, depois de colocar um valor em uma célula, o algoritmo chama a validação parcial. Essa validação já elimina escolhas ruins antes de continuar, sem esperar o tabuleiro inteiro ficar completo. Por exemplo:
 
-- se aparecerem três sóis seguidos, aquele caminho é abandonado;
-- se uma linha tiver mais sóis ou luas do que o permitido, aquele caminho é abandonado;
+- se aparecerem três sóis seguidos, aquele caminho é abandonado
+- se uma linha tiver mais sóis ou luas do que o permitido, aquele caminho é abandonado
 - se uma restrição de igualdade ou oposição já estiver violada, aquele caminho é abandonado.
 
 Essas verificações são feitas sobre a parte do tabuleiro afetada pela última escolha: linha, coluna e restrições da célula preenchida. Isso foi uma decisão simples, mas importante, porque evita repetir a validação completa em cada nível da recursão.
@@ -86,6 +90,8 @@ Para compilar o projeto, foi usado:
 ```bash
 javac -d out $(find src -name '*.java')
 ```
+
+Nas execuções, usamos as estatísticas para comparar os algoritmos porque o tempo em milissegundos pode variar de uma máquina para outra e até entre duas execuções seguidas. Já a quantidade de combinações testadas, nós explorados e retrocessos mostra melhor o comportamento da busca para aquele tabuleiro.
 
 ### Exemplo 1 - 4x4 fácil com força bruta e backtracking
 
@@ -268,8 +274,8 @@ O backtracking também tem pior caso exponencial, porque em uma situação muito
 
 As principais podas usadas foram:
 
-- não permitir três símbolos iguais seguidos;
-- não deixar uma linha ou coluna passar da metade de sóis ou luas;
+- não permitir três símbolos iguais seguidos
+- não deixar uma linha ou coluna passar da metade de sóis ou luas
 - verificar as restrições de igualdade e oposição assim que as células envolvidas já possuem valor.
 
 Essas podas diminuem muito o número de caminhos explorados. No 4x4, por exemplo, a força bruta tinha 1024 combinações possíveis, mas o backtracking explorou apenas 16 nós. Nos tabuleiros 6x6, o backtracking também resolveu rapidamente, mesmo quando a força bruta teria um espaço de busca muito grande.
