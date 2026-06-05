@@ -2,7 +2,7 @@
 **Disciplina:** Fundamentos de Projeto e Análise de Algoritmos  
 **Curso:** Engenharia de Software — PUC Minas  
 
-Resolução do quebra-cabeça **Tango** utilizando Força Bruta e Backtracking.
+Resolução do quebra-cabeça **Tango** utilizando Força Bruta e Backtracking, com validação modular das regras do jogo e comparação por estatísticas de busca.
 
 ---
 
@@ -12,6 +12,13 @@ Resolução do quebra-cabeça **Tango** utilizando Força Bruta e Backtracking.
 ```powershell
 cd tp2-tango
 javac -d out (Get-ChildItem -Recurse -Path src -Filter *.java | Select-Object -ExpandProperty FullName)
+```
+
+No Linux, também é possível compilar com:
+
+```bash
+cd tp2-tango
+javac -d out $(find src -name '*.java')
 ```
 
 ### 2. Rodar
@@ -43,7 +50,7 @@ java -cp out Main puzzles\medium_6x6.txt backtracking
 
 ## Por que usar o puzzle 4×4 para o Força Bruta?
 
-O Força Bruta testa **todas as combinações possíveis** de preenchimento do tabuleiro sem descartar nenhuma antecipadamente. O número de combinações cresce exponencialmente com o número de células vazias:
+O Força Bruta percorre as combinações possíveis de preenchimento do tabuleiro sem descartar caminhos inválidos antecipadamente. Ele para quando encontra uma solução válida, mas no pior caso pode precisar testar todo o espaço de busca. O número de combinações cresce exponencialmente com o número de células vazias:
 
 ```
 Combinações = 2^(células vazias)
@@ -55,9 +62,22 @@ Combinações = 2^(células vazias)
 | 6×6 fácil | 33        | ~8,6 bilhões |
 | 6×6 médio | 30        | ~1 bilhão   |
 
-Um puzzle 6×6 com 33 células vazias exigiria testar **8,6 bilhões de tabuleiros completos**, o que levaria horas para terminar. O puzzle 4×4, com apenas 10 células vazias, resolve em milissegundos — tornando viável demonstrar o algoritmo e comparar os resultados com o Backtracking.
+Um puzzle 6×6 com 33 células vazias pode exigir até **8,6 bilhões de tabuleiros completos**, o que levaria horas para terminar. O puzzle 4×4, com apenas 10 células vazias, resolve em milissegundos — tornando viável demonstrar o algoritmo e comparar os resultados com o Backtracking.
 
 Essa limitação do Força Bruta é exatamente o que motiva o uso do Backtracking, que resolve o mesmo problema em dezenas de tentativas ao invés de bilhões.
+
+Durante a comparação, o programa relê o arquivo do puzzle antes de executar cada algoritmo. Isso garante que Força Bruta e Backtracking partam sempre do mesmo tabuleiro inicial, já que os dois modificam o tabuleiro em memória enquanto buscam a solução.
+
+As estatísticas impressas no terminal ajudam a comparar os métodos:
+
+| Estatística | Significado |
+|-------------|-------------|
+| Combinações testadas | Quantidade de máscaras avaliadas pela Força Bruta |
+| Total possível | Tamanho teórico do espaço de busca da Força Bruta |
+| Nós explorados | Tentativas feitas pelo Backtracking |
+| Retrocessos | Quantidade de vezes que o Backtracking voltou após uma tentativa inválida |
+
+O tempo em milissegundos também é exibido, mas pode variar conforme a máquina e a execução.
 
 ---
 
@@ -100,9 +120,26 @@ A linha `V 0 2 X` significa: as células `(0,2)` e `(1,2)` devem ter símbolos *
 
 ---
 
+## Documentação técnica
+
+A documentação completa está disponível em:
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `docs/documentacao_tecnica_tango.md` | Versão em Markdown |
+| `docs/documentacao_tecnica_tango.pdf` | Versão em PDF para entrega |
+
+Ela apresenta a modelagem do problema, as estratégias de Força Bruta e Backtracking, exemplos de execução e análise de complexidade.
+
+---
+
 ## Estrutura do projeto
 
 ```
+docs/
+├── documentacao_tecnica_tango.md
+└── documentacao_tecnica_tango.pdf
+
 tp2-tango/
 ├── puzzles/
 │   ├── easy_4x4.txt
