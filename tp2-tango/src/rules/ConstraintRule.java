@@ -1,7 +1,6 @@
-package solver;
+package rules;
 
 import model.Board;
-import model.Constraint;
 
 public class ConstraintRule implements Rule {
 

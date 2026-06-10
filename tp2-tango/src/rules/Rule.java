@@ -1,4 +1,4 @@
-package solver;
+package rules;
 
 import model.Board;
 

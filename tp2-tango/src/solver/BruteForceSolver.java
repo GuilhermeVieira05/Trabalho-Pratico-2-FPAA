@@ -2,6 +2,7 @@ package solver;
 
 import model.Board;
 import model.CellValue;
+import validation.RuleValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,6 @@ public class BruteForceSolver {
 
     public long getCombinationsTried()  { return combinationsTried; }
     public long getTotalCombinations()  { return totalCombinations; }
-
-    // -------------------------------------------------------------------------
 
     private List<int[]> collectEmptyCells(Board board) {
         List<int[]> list = new ArrayList<>();

@@ -1,6 +1,11 @@
-package solver;
+package validation;
 
 import model.Board;
+import rules.AdjacencyRule;
+import rules.BalanceRule;
+import rules.ConstraintRule;
+import rules.Rule;
+
 import java.util.List;
 
 public class RuleValidator {
