@@ -7,7 +7,7 @@ import validation.RuleValidator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BruteForceSolver {
+public class BruteForceSolver implements ISolver {
 
     private final RuleValidator validator = new RuleValidator();
     private long combinationsTried;
@@ -33,8 +33,22 @@ public class BruteForceSolver {
         return false;
     }
 
-    public long getCombinationsTried()  { return combinationsTried; }
-    public long getTotalCombinations()  { return totalCombinations; }
+    @Override
+    public String getName() {
+        return "Forca Bruta";
+    }
+
+    @Override
+    public String getStatistics(long tempoMs) {
+        return "\n--- Estatisticas da Forca Bruta ---\n"
+             + "Combinacoes testadas : " + combinationsTried + "\n"
+             + "Total possivel       : " + totalCombinations + " (2^" + log2(totalCombinations) + ")\n"
+             + "Tempo total          : " + tempoMs + " ms";
+    }
+
+    private static int log2(long n) {
+        return n <= 0 ? 0 : 63 - Long.numberOfLeadingZeros(n);
+    }
 
     private List<int[]> collectEmptyCells(Board board) {
         List<int[]> list = new ArrayList<>();

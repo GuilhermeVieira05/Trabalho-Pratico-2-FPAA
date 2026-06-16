@@ -1,10 +1,9 @@
 4
-S . L .
-. L . .
-S . . .
-. S . S
-H 0 0 =
+L L . .
+L S . S
+. S L L
+. L S .
+H 0 1 X
+H 0 2 =
 V 0 2 X
-H 1 1 X
-V 2 0 X
-H 2 2 X
+H 1 0 X

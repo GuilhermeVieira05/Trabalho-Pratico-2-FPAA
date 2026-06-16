@@ -4,7 +4,7 @@ import model.Board;
 import model.CellValue;
 import validation.RuleValidator;
 
-public class BacktrackingSolver {
+public class BacktrackingSolver implements ISolver {
 
     private final RuleValidator validator = new RuleValidator();
     private int nodesExplored;
@@ -16,8 +16,18 @@ public class BacktrackingSolver {
         return backtrack(board);
     }
 
-    public int getNodesExplored()  { return nodesExplored; }
-    public int getBacktrackCount() { return backtrackCount; }
+    @Override
+    public String getName() {
+        return "Backtracking";
+    }
+
+    @Override
+    public String getStatistics(long tempoMs) {
+        return "\n--- Estatisticas do Backtracking ---\n"
+             + "Nos explorados : " + nodesExplored + "\n"
+             + "Retrocessos    : " + backtrackCount + "\n"
+             + "Tempo total    : " + tempoMs + " ms";
+    }
 
     private boolean backtrack(Board board) {
         int[] next = findNextEmpty(board);
