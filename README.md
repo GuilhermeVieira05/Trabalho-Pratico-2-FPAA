@@ -86,8 +86,14 @@ O tempo em milissegundos também é exibido, mas pode variar conforme a máquina
 | Arquivo | Tamanho | Algoritmo recomendado |
 |---------|---------|----------------------|
 | `puzzles/easy_4x4.txt` | 4×4 | Ambos (comparação) |
+| `puzzles/medium_4x4.txt` | 4×4 | Ambos (comparação) |
+| `puzzles/hard_4x4.txt` | 4×4 | Ambos (comparação) |
 | `puzzles/easy_6x6.txt` | 6×6 | Backtracking |
 | `puzzles/medium_6x6.txt` | 6×6 | Backtracking |
+| `puzzles/hard_6x6.txt` | 6×6 | Backtracking |
+| `puzzles/easy_8x8.txt` | 8×8 | Backtracking |
+| `puzzles/medium_8x8.txt` | 8×8 | Backtracking |
+| `puzzles/hard_8x8.txt` | 8×8 | Backtracking |
 
 ---
 
@@ -126,8 +132,7 @@ A documentação completa está disponível em:
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `docs/documentacao_tecnica_tango.md` | Versão em Markdown |
-| `docs/documentacao_tecnica_tango.pdf` | Versão em PDF para entrega |
+| `docs/Trabalho_FPAA___Backtracking.pdf` | Versão em PDF para entrega |
 
 Ela apresenta a modelagem do problema, as estratégias de Força Bruta e Backtracking, exemplos de execução e análise de complexidade.
 
@@ -137,31 +142,42 @@ Ela apresenta a modelagem do problema, as estratégias de Força Bruta e Backtra
 
 ```
 docs/
-├── documentacao_tecnica_tango.md
-└── documentacao_tecnica_tango.pdf
+└── Trabalho_FPAA___Backtracking.pdf
 
 tp2-tango/
 ├── puzzles/
 │   ├── easy_4x4.txt
+│   ├── medium_4x4.txt
+│   ├── hard_4x4.txt
 │   ├── easy_6x6.txt
-│   └── medium_6x6.txt
-└── src/
-    ├── Main.java
-    ├── io/
-    │   ├── BoardReader.java
-    │   └── BoardPrinter.java
-    ├── model/
-    │   ├── Board.java
-    │   ├── Cell.java
-    │   ├── CellValue.java
-    │   ├── Constraint.java
-    │   └── ConstraintType.java
-    └── solver/
-        ├── Rule.java
-        ├── AdjacencyRule.java
-        ├── BalanceRule.java
-        ├── ConstraintRule.java
-        ├── RuleValidator.java
-        ├── BruteForceSolver.java
-        └── BacktrackingSolver.java
+│   ├── medium_6x6.txt
+│   ├── hard_6x6.txt
+│   ├── easy_8x8.txt
+│   ├── medium_8x8.txt
+│   └── hard_8x8.txt
+├── src/
+│   ├── Main.java
+│   ├── io/
+│   │   ├── BoardReader.java
+│   │   └── BoardPrinter.java
+│   ├── model/
+│   │   ├── Board.java
+│   │   ├── Cell.java
+│   │   ├── CellValue.java
+│   │   ├── Constraint.java
+│   │   └── ConstraintType.java
+│   ├── rules/
+│   │   ├── Rule.java
+│   │   ├── AdjacencyRule.java
+│   │   ├── BalanceRule.java
+│   │   └── ConstraintRule.java
+│   ├── solver/
+│   │   ├── ISolver.java
+│   │   ├── SolverFactory.java
+│   │   ├── BruteForceSolver.java
+│   │   └── BacktrackingSolver.java
+│   └── validation/
+│       └── RuleValidator.java
+└── test/
+    └── ValidationTests.java
 ```
